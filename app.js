@@ -1,6 +1,11 @@
+const express = require('express');
+const app = express();
+
+const helmet = require('helmet');
+app.use(helmet());
+
 require("dotenv").config();
 const createError = require("http-errors");
-const express = require("express");
 const path = require("path");
 const cookieParser = require("cookie-parser");
 const logger = require("morgan");
@@ -11,7 +16,14 @@ const { v4: uuidv4 } = require("uuid");
 const MongoStore = require("connect-mongo");
 const nocache = require("nocache");
 const methodOverride = require("method-override");
+
+require("dotenv").config();
+
+
 const passport = require("./src/config/passport-config");
+
+app.use(helmet());
+
 
 // Database connection
 const connectDB = require("./src/config/db");
@@ -33,7 +45,7 @@ const adminRouter = require("./src/routes/adminRoute");
  */
 
 // Express App
-const app = express();
+
 
 // Connect Database
 connectDB();

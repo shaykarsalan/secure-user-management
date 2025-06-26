@@ -1,4 +1,7 @@
+const jwt = require("jsonwebtoken");
+const jwtSecret = "my-super-secret"; // Later move to .env
 const bcrypt = require("bcrypt");
+const validator = require("validator");
 const adminLayout = "./layouts/adminLayout.ejs";
 const User = require("../model/userSchema");
 const passport = require("../config/passport-config");
@@ -23,6 +26,7 @@ module.exports = {
       error: req.flash("error"),
     });
   },
+
   getUserRegister: (req, res) => {
     const locals = {
       title: "User Register",
@@ -38,30 +42,22 @@ module.exports = {
   // login register
   userRegister: async (req, res) => {
     const { firstName, lastName, email, pwd, pwdConf } = req.body;
-
-    const isExist = await User.findOne({ email });
-
+ const isExist = await User.findOne({ email });
     if (isExist) {
       req.flash("error", "User already exists, Please login");
       console.log("User already exists, Please login");
       return res.redirect("/login");
     }
-
-    if (pwd.length < 8 && pwdConf.length < 8) {
-      req.flash("error", "Password is less than 8 character");
-      console.log( "Password is less than 8 character" );
-      res.redirect("/register");
-    } else {
+    
+ else {
       if (pwd === pwdConf) {
         const hashpwd = await bcrypt.hash(pwd, 12);
-
         const user = await User.create({
           firstName,
           lastName,
           email,
           password: hashpwd,
         });
-
         if (user) {
           req.flash("success", "User successfully created!!");
           res.redirect("/login");
